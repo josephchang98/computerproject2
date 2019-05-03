@@ -54,7 +54,7 @@ t = 0:Ts:Tk; %need to check if starting value is 0
 figure(2)
 plot(t, h_real);
 
-%not sure if t_u is what we need for x; i think t is what we use.
+%not sure if t_u is wha
 t_u = (-5:0.01:5)';% ' is very important to unit step function
 impulse = t_u==0;
 unitstep = t_u>=0;
@@ -62,23 +62,11 @@ unitstep = t_u>=0;
 %quad = t_u.^2.*unitstep;
 x = exp(j*2*pi*F0*t_u);%F0 here needs to be a different variable
 x_u = x.*unitstep;
-figure(3);
+figure(2);
 %plot(t_u,[impulse unitstep ramp quad]);
 subplot(2,1,1);
 plot(t_u,real(x_u));
 subplot(2,1,2);
 plot(t_u,imag(x_u));
 
-Hfo = 1;
-for num = 1:length(z)
-    Hfo = Hfo*(((1j*2*pi*F0)-z(num))/((1j*2*pi*F0)-p(num)));
-end
 
-y = Hfo.*x_u;
-
-%again, don't think t_u is the correct time array
-figure(4);
-subplot(2,1,1);
-plot(t_u,real(y));
-subplot(2,1,2);
-plot(t_u,imag(y));
