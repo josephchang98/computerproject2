@@ -1,0 +1,62 @@
+clear all;
+close all;
+
+Bw = 1e6; %Bandwidth of the lowpass filter
+F0 = 1.5e6;%Bandpass filter's center frequency
+Fc = 0.5*Bw;%cutoff frequency of the initial lowpass filter prototype
+%t = 0:1e9;
+%x = exp(j*2*pi*F0*t);%input signal 
+%y(t)=x(t)*h(t)
+
+[B,A] = ellip(6,2,40,2*pi*Fc,'s');%Matlab's built-in elliptical filter design
+                                  % 6thorder, 2 dB passband ripple, 40 db rejection
+%A = 1.0e(+38).*[1 2 3 0 1.3587];%If you want to customize the
+%B = 1.0e(+38).*[1 4 2 0 1.7105];
+p = roots(A);%Find roots of output-side polynomial (the poles)
+pp = p + 1j*2*pi*F0;%Replicate copies of the poles shifted up and down by the 
+                    % %bandpass filter's center frequency       
+pn = p -1j*2*pi*F0;
+p = [pp; pn];
+z = roots(B);%Find roots of input-side polynomial (the zeros)
+zp = z + 1j*2*pi*F0;%Replicate copies of the zeros shifted up and down by the 
+                    %bandpass filter's center frequency
+zn = z -1j*2*pi*F0;
+z = [zp; zn]; 
+
+Fs = 10*max(imag(p));%10 times larger than largest imaginary part of any pole
+L = 1e4;%length(F_f);
+dF = Fs/L;%abs(F_f(1)-F_f(2));
+lenFreq = L*dF;
+F = -0.5*Fs:dF:0.5*Fs;
+Ts = 1/Fs;
+
+%F_f = linspace(-1e8, 1e8,10000);
+s = j*2*pi*F;
+Z = prod(s-z);
+P = prod(s-p);
+H = Z./P;%ones(1, length(F_f));
+% equation 2 in pdf
+%Original was too complex
+figure(1);
+plot(F,H);
+xlabel('Frequency');
+ylabel('Frequency Response');
+
+
+%F1 = -0.5.*Fs:dF:-0.5*Fs+.5.*lenFreq.*dF;
+%F2 = 0.5*Fs-.5*lenFreq*dF:dF:0.5*Fs-dF;
+%Freq = [F1,F2];
+%Freq = [-0.5*Fs (-0.5Fs + dF) (-0.5Fs + 2dF) (-0.5Fs + .5*lenFreq*dF) (0.5*Fs - .5*lenFreq*dF) (0.5*Fs - 2*dF) (0.5*Fs - dF)]; 
+%do inverse fftshift on H
+H_ = fftshift(H);
+h_ = ifft(H'); %do inverse fft
+h = Fs.*h_; %multiply result by Fs; result = h(t)
+h_real = real(h); %take real part of h(t)
+
+Tk = L*Ts;%This is a given
+%the starting value needs to be length(h_real)*Ts
+t = 0:Ts:Tk; 
+figure(2);
+plot(t, h_real);
+xlabel('Frequency');
+ylabel('Frequency Response');
