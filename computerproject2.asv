@@ -50,7 +50,7 @@ h = Fs.*h_; %multiply result by Fs; result = h(t)
 h_real = real(h); %take real part of h(t)
 
 Tk = L*Ts;
-t = length(h_real)*Ts:Ts:Tk;
+t = 0:Ts:Tk;
 figure(2)
 plot(t, h_real);
 
