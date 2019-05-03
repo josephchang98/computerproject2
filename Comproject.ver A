@@ -38,6 +38,7 @@ plot(F,H);
 axis([-10^7 10^7 -80 100]);
 xlabel('Frequency');
 ylabel('Frequency Response');
+title('');
 
 H_ = fftshift(H);
 h_ = ifft(H_); %do inverse fft
@@ -48,19 +49,25 @@ Tk = L*Ts;%This is a given
 t = 0:Ts:Tk; 
 figure(2);
 grid on;
-plot(t, h_real);
+plot(t,h_real);
 axis([0 4e-5 -1.5e8 1.5e8]);
 xlabel('Frequency');
 ylabel('Frequency Response');
 
-t_u = (0:Ts:2*Tk)';% ' is very important to unit step function
+t_u = (-2*Tk:Ts:2*Tk)';% ' is very important to unit step function
 impulse = t_u==0;
 unitstep = t_u>=0;
 x = exp(j*2*pi*F0*t_u);
-%Hss = 
-yss = H.*x;
-%figure(3);
+figure(3);
 %subplot(2,1,1);
-%plot(F,real(yss));%This causes a crash
+plot(t_u,x);
 %subplot(2,1,2);
-%plot(F,imag(yss));%This causes a crash
+%plot(t_u,x);%This does start at 0
+%axis([-Tk Tk -2 2]);
+
+yss = conv(h_real,x);
+figure(4);
+subplot(2,1,1);
+plot(t_u,real(yss));
+subplot(2,1,2);
+plot(t_u,imag(yss));%trying to find the time array
