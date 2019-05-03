@@ -20,7 +20,7 @@ z = [zp; zn];
 
 %H = z/p; %H(f)
 %don't know how many values we want in frequency array
-F_f = linspace(-1e10, 1e10, 10000);
+F_f = linspace(-1e8, 1e8,10000);
 H = ones(1, length(F_f));
 % equation 2 in pdf
 for freq = F_f
@@ -50,7 +50,7 @@ h = Fs.*h_; %multiply result by Fs; result = h(t)
 h_real = real(h); %take real part of h(t)
 
 Tk = L*Ts;
-t = 0:Ts:Tk; %need to check if starting value is 0
+t = length(h_real)*Ts:Ts:Tk;
 figure(2)
 plot(t, h_real);
 
