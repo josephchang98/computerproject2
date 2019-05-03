@@ -28,7 +28,7 @@ H = ones(1, length(F_f));
 % equation 2 in pdf
 for freq = F_f
     for num = 1:length(z)
-        H(num) = H(num)*(((1j*2*pi*freq)-z(num))/((1j*2*pi*freq)-p(num)))
+        H(num) = H(num)*(((1j*2*pi*freq)-z(num))/((1j*2*pi*freq)-p(num)));
     end
 end
 
@@ -38,14 +38,16 @@ xlabel('Frequency');
 
 dF = abs(F_f(1)-F_f(2));
 L = length(F_f);
-lenFreq = L*df;
-Freq = zeroes(1, lenFreq);
-%Freq = [-0.5*Fs (-0.5Fs + dF) (-0.5Fs + 2dF) (-0.5Fs + .5*lenFreq*dF) (0.5*Fs + .5*lenFreq*dF) (0.5*Fs - 2*dF) (0.5*Fs - dF)]; 
+lenFreq = L*dF;
+F1 = -0.5*Fs:dF:-0.5*Fs+.5*lenFreq*dF;
+F2 = 0.5*Fs-.5*lenFreq*dF:dF:0.5*Fs-dF;
+Freq = [F1,F2];
+%Freq = [-0.5*Fs (-0.5Fs + dF) (-0.5Fs + 2dF) (-0.5Fs + .5*lenFreq*dF) (0.5*Fs - .5*lenFreq*dF) (0.5*Fs - 2*dF) (0.5*Fs - dF)]; 
 %do inverse fftshift on H
-%do inverse fft
-%multiply result by Fs
-%result = h(t)
-%take real part of h(t)
+H_ = fftshift(H);
+h_ = infft(H'); %do inverse fft
+h = Fs.*h_; %multiply result by Fs; result = h(t)
+h_real = real(h); %take real part of h(t)
 
 t_u = (-5:0.01:5)';% ' is very important to unit step function
 impulse = t_u==0;
