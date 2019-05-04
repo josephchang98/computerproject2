@@ -61,17 +61,18 @@ unitstep = t_u>=0;
 Fo = 1.5e6;%Center frequency that may not be the bandpass F0
 x = exp(j*2*pi*Fo*t_u);%.*impulse;
 figure(3);
-%subplot(2,1,1);
 plot(t_u,x);
-title('System Frequency Input Response')
-%subplot(2,1,2);
-%plot(t_u,x);%This does start at 0
-%axis([-Tk Tk -2 2]);
+title('System Frequency Input Response');
+xlabel('Frequency');
+ylabel('Input Response');
 
-%y = conv(1,h_real).*Ts;
-%y = conv(1,H);
-y = h .* exp(j*2*pi*Fo*t_y).*Ts;
-yss = conv(x,h).*Ts;
+
+sf0 = j*2*pi*F0;
+Zf0 = prod(sf0-z);
+Pf0 = prod(sf0-p);
+Hf0 = Zf0./Pf0;
+y = Hf0.*x;
+yss = conv(x,H);
 %yss = conv(x,h);
 t_1 = linspace(0,Tk,length(y));
 t_x = linspace(0,Tk,length(yss));
@@ -88,5 +89,4 @@ hold on;
 plot(t_x,imag(yss),'b');
 hold off;
 title('Imaginary Signals in the Time Domain');
-%xlabel('');
-figure(5);subplot(2,1,1);plot(t_1,real(y),'r');subplot(2,1,2);plot(t_x,real(yss),'b');
+xlabel('Frequency');
